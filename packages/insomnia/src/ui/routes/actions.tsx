@@ -338,6 +338,119 @@ export const createNewWorkspaceAction: ActionFunction = async ({
   return redirect(`/organization/${organizationId}/project/${projectId}/workspace/${workspace._id}/${scopeToActivity(workspace.scope)}`);
 };
 
+export const createNewWorkspaceWithRequestAction: ActionFunction = async ({
+  params,
+  request,
+}) => {
+  const { organizationId, projectId } = params;
+  invariant(organizationId, 'Organization ID is required');
+  invariant(projectId, 'Project ID is required');
+
+  const project = await models.project.getById(projectId);
+
+  invariant(project, 'Project not found');
+
+  const formData = await request.formData();
+
+  const name = formData.get('name');
+  invariant(typeof name === 'string', 'Name is required');
+
+  const scope = formData.get('scope');
+  invariant(scope === 'design' || scope === 'collection' || scope === 'mock-server' || scope === 'environment', 'Scope is required');
+
+  const flushId = await database.bufferChanges();
+
+  const workspaceName = name || (scope === 'collection' ? 'My Collection' : 'my-spec.yaml');
+
+  const workspace = await models.workspace.create({
+    name: workspaceName,
+    scope,
+    parentId: projectId,
+  });
+
+  if (scope === 'mock-server') {
+    const mockServerType = formData.get('mockServerType');
+    invariant(mockServerType === 'cloud' || mockServerType === 'self-hosted', 'Mock Server type is required');
+
+    const mockServerPatch: Partial<MockServer> = {
+      name,
+    };
+
+    if (mockServerType === 'cloud') {
+      mockServerPatch.useInsomniaCloud = true;
+    }
+
+    if (mockServerType === 'self-hosted') {
+      const mockServerUrl = formData.get('mockServerUrl');
+      invariant(typeof mockServerUrl === 'string', 'Mock Server URL is required');
+      mockServerPatch.useInsomniaCloud = false;
+      mockServerPatch.url = mockServerUrl;
+    }
+
+    await models.environment.getOrCreateForParentId(workspace._id);
+    const workspaceMeta = await models.workspaceMeta.getOrCreateByParentId(workspace._id);
+    await models.mockServer.getOrCreateForParentId(workspace._id, mockServerPatch);
+    await database.flushChanges(flushId);
+
+    const { id } = await models.userSession.getOrCreate();
+    if (id && !workspaceMeta.gitRepositoryId) {
+      const vcs = VCSInstance();
+      await initializeLocalBackendProjectAndMarkForSync({
+        vcs,
+        workspace,
+      });
+    }
+    window.main.trackSegmentEvent({
+      event: SegmentEvent.mockCreate,
+    });
+    return redirect(`/organization/${organizationId}/project/${projectId}/workspace/${workspace._id}/${scopeToActivity(workspace.scope)}`);
+  }
+
+  if (scope === 'design') {
+    await models.apiSpec.getOrCreateForParentId(workspace._id);
+  }
+
+  // Create default env, cookie jar, and meta
+  await models.environment.getOrCreateForParentId(workspace._id);
+  await models.cookieJar.getOrCreateForParentId(workspace._id);
+  const workspaceMeta = await models.workspaceMeta.getOrCreateByParentId(workspace._id);
+
+  // If this is a collection, create a default request
+  if (scope === 'collection') {
+    const settings = await models.settings.getOrCreate();
+    const defaultHeaders = settings.disableAppVersionUserAgent ? [] : [{ name: 'User-Agent', value: 'insomnia/12.3' }];
+    await models.request.create({
+      parentId: workspace._id,
+      method: 'GET',
+      name: 'New Request',
+      headers: defaultHeaders,
+    });
+  }
+
+  await database.flushChanges(flushId);
+
+  const { id } = await models.userSession.getOrCreate();
+  if (id && !workspaceMeta.gitRepositoryId) {
+    const vcs = VCSInstance();
+    await initializeLocalBackendProjectAndMarkForSync({
+      vcs,
+      workspace,
+    });
+  }
+
+  let event = SegmentEvent.documentCreate;
+
+  if (isCollection(workspace)) {
+    event = SegmentEvent.collectionCreate;
+  } else if (isEnvironment(workspace)) {
+    event = SegmentEvent.environmentWorkspaceCreate;
+  }
+
+  window.main.trackSegmentEvent({
+    event: event,
+  });
+  return redirect(`/organization/${organizationId}/project/${projectId}/workspace/${workspace._id}/${scopeToActivity(workspace.scope)}`);
+};
 async function deleteWorkspaceFromCloud(workspace: Workspace, project: Project) {
   const workspaceMeta = await models.workspaceMeta.getOrCreateByParentId(workspace._id);
   const isGitSync = !!workspaceMeta.gitRepositoryId;
@@ -1353,7 +1466,7 @@ const getCollectionItem = async (id: string) => {
 };
 
 export const reorderCollectionAction: ActionFunction = async ({ request, params }) => {
-  const { workspaceId }  = params;
+  const { workspaceId } = params;
   invariant(typeof workspaceId === 'string', 'Workspace ID is required');
   const { id, targetId, dropPosition, metaSortKey } = await request.json();
   invariant(typeof id === 'string', 'ID is required');

@@ -63,10 +63,11 @@ interface Props {
   createEnvironment: () => void;
   importFrom: () => void;
   cloneFromGit: () => void;
+  createAICollection: () => void;
   isGitSyncEnabled: boolean;
 }
 
-export const EmptyStatePane: FC<Props> = ({ createRequestCollection, createDesignDocument, createMockServer, createEnvironment, importFrom, cloneFromGit, isGitSyncEnabled }) => {
+export const EmptyStatePane: FC<Props> = ({ createRequestCollection, createDesignDocument, createMockServer, createEnvironment, importFrom, cloneFromGit, createAICollection, isGitSyncEnabled }) => {
   const { organizationId } = useParams<{ organizationId: string }>();
   const { organizations } = useOrganizationLoaderData();
   const { userSession } = useRootLoaderData();
@@ -125,6 +126,16 @@ export const EmptyStatePane: FC<Props> = ({ createRequestCollection, createDesig
           marginTop: 'var(--padding-md)',
         }}
       >
+        <SquareButton
+          onClick={createAICollection}
+        >
+          <i
+            className='fa fa-star'
+            style={{
+              fontSize: 'var(--font-size-xl)',
+            }}
+          /> Create AI Collection (Kusho)
+        </SquareButton>
         <SquareButton
           onClick={createRequestCollection}
         >

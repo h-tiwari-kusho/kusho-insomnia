@@ -211,6 +211,7 @@ export const Debug: FC = () => {
     workspaceId: string;
     requestId?: string;
     requestGroupId?: string;
+    isAICollection?: string;
   };
   const [grpcStates, setGrpcStates] = useState<GrpcRequestState[]>(
     grpcRequests.map(r => ({

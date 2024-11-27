@@ -235,6 +235,7 @@ const Root = () => {
 
   return (
     <AIProvider>
+      {/* <TestGeneratorProvider machineId={'565454343'}> */}
       <NunjucksEnabledProvider>
         <ErrorBoundary>
           <div className="app">
@@ -254,6 +255,7 @@ const Root = () => {
           )}
         </ErrorBoundary>
       </NunjucksEnabledProvider>
+      {/* </TestGeneratorProvider> */}
     </AIProvider>
   );
 };

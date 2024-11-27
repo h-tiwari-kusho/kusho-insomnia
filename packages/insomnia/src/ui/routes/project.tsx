@@ -355,8 +355,8 @@ async function getAllLocalFiles({
 
     const hasUnsavedChanges = Boolean(
       isDesign(workspace) &&
-        workspaceMeta?.cachedGitLastCommitTime &&
-        modifiedLocally > workspaceMeta?.cachedGitLastCommitTime
+      workspaceMeta?.cachedGitLastCommitTime &&
+      modifiedLocally > workspaceMeta?.cachedGitLastCommitTime
     );
 
     const specVersion = spec?.info?.version ? String(spec?.info?.version) : '';
@@ -399,7 +399,7 @@ async function getAllRemoteFiles({
 
     const [allPulledBackendProjectsForRemoteId, allFetchedRemoteBackendProjectsForRemoteId] = await Promise.all([
       vcs.localBackendProjects().then(projects => projects.filter(p => p.id === remoteId)),
-    // Remote backend projects are fetched from the backend since they are not stored locally
+      // Remote backend projects are fetched from the backend since they are not stored locally
       vcs.remoteBackendProjects({ teamId: organizationId, teamProjectId: remoteId }),
     ]);
 
@@ -755,48 +755,71 @@ const ProjectRoute: FC = () => {
 
   const createNewCollection = () => {
     activeProject?._id &&
-    showPrompt({
-      title: 'Create New Request Collection',
-      submitName: 'Create',
-      placeholder: 'My Collection',
-      defaultValue: 'My Collection',
-      selectText: true,
-      onComplete: async (name: string) => {
-        fetcher.submit(
-          {
-            name,
-            scope: 'collection',
-          },
-          {
-            action: `/organization/${organizationId}/project/${activeProject._id}/workspace/new`,
-            method: 'post',
-          }
-        );
-      },
-    });
+      showPrompt({
+        title: 'Create New Request Collection',
+        submitName: 'Create',
+        placeholder: 'My Collection',
+        defaultValue: 'My Collection',
+        selectText: true,
+        onComplete: async (name: string) => {
+          fetcher.submit(
+            {
+              name,
+              scope: 'collection',
+            },
+            {
+              action: `/organization/${organizationId}/project/${activeProject._id}/workspace/new`,
+              method: 'post',
+            }
+          );
+        },
+      });
+  };
+
+  const createAICollection = () => {
+    activeProject?._id &&
+      showPrompt({
+        title: 'Create New Request Collection',
+        submitName: 'Create',
+        placeholder: 'My Collection',
+        defaultValue: 'My Collection',
+        selectText: true,
+        onComplete: async (name: string) => {
+          fetcher.submit(
+            {
+              name,
+              scope: 'collection',
+            },
+            {
+              action: `/organization/${organizationId}/project/${activeProject._id}/workspace/new-with-req`,
+              method: 'post',
+            }
+          );
+        },
+      });
   };
 
   const createNewDocument = () => {
     activeProject?._id &&
-    showPrompt({
-      title: 'Create New Design Document',
-      submitName: 'Create',
-      placeholder: 'my-spec.yaml',
-      defaultValue: 'my-spec.yaml',
-      selectText: true,
-      onComplete: async (name: string) => {
-        fetcher.submit(
-          {
-            name,
-            scope: 'design',
-          },
-          {
-            action: `/organization/${organizationId}/project/${activeProject._id}/workspace/new`,
-            method: 'post',
-          }
-        );
-      },
-    });
+      showPrompt({
+        title: 'Create New Design Document',
+        submitName: 'Create',
+        placeholder: 'my-spec.yaml',
+        defaultValue: 'my-spec.yaml',
+        selectText: true,
+        onComplete: async (name: string) => {
+          fetcher.submit(
+            {
+              name,
+              scope: 'design',
+            },
+            {
+              action: `/organization/${organizationId}/project/${activeProject._id}/workspace/new`,
+              method: 'post',
+            }
+          );
+        },
+      });
   };
   const isEnterprise = currentPlan?.type.includes('enterprise');
   const isCloudProjectOrEnterprisePlan = activeProject?.remoteId || isEnterprise;
@@ -807,7 +830,7 @@ const ProjectRoute: FC = () => {
       : showModal(AlertModal, {
         title: 'Change Project',
         message: 'Mock feature is only supported for Cloud projects and Enterprise local projects.',
-    });
+      });
   };
 
   const createNewGlobalEnvironment = () => {
@@ -873,23 +896,23 @@ const ProjectRoute: FC = () => {
     icon: IconName;
     action: () => void;
   }[] = [
-    {
-      id: 'new-collection',
-      name: 'Request collection',
-      icon: 'bars',
-      action: createNewCollection,
-    },
-    {
-      id: 'new-document',
-      name: 'Design document',
-      icon: 'file',
-      action: createNewDocument,
-    },
-    {
-      id: 'new-mock-server',
-      name: 'Mock Server',
-      icon: 'server',
-      action: createNewMockServer,
+      {
+        id: 'new-collection',
+        name: 'Request collection',
+        icon: 'bars',
+        action: createNewCollection,
+      },
+      {
+        id: 'new-document',
+        name: 'Design document',
+        icon: 'file',
+        action: createNewDocument,
+      },
+      {
+        id: 'new-mock-server',
+        name: 'Mock Server',
+        icon: 'server',
+        action: createNewMockServer,
       },
       {
         id: 'new-environment',
@@ -898,12 +921,12 @@ const ProjectRoute: FC = () => {
         action: createNewGlobalEnvironment,
       },
       {
-      id: 'git-clone',
-      name: 'Git Clone',
-      icon: 'code-fork',
-      action: importFromGit,
-    },
-  ];
+        id: 'git-clone',
+        name: 'Git Clone',
+        icon: 'code-fork',
+        action: importFromGit,
+      },
+    ];
 
   const scopeActionList: {
     id: string;
@@ -915,31 +938,31 @@ const ProjectRoute: FC = () => {
       run: () => void;
     };
   }[] = [
-    {
-      id: 'all',
-      label: `All files (${allFilesCount})`,
-      icon: 'border-all',
-    },
-    {
-      id: 'design',
-      label: `Documents (${documentsCount})`,
-      icon: 'file',
-      action: {
-        icon: 'plus',
-        label: 'New design document',
-        run: createNewDocument,
+      {
+        id: 'all',
+        label: `All files (${allFilesCount})`,
+        icon: 'border-all',
       },
-    },
-    {
-      id: 'collection',
-      label: `Collections (${collectionsCount})`,
-      icon: 'bars',
-      action: {
-        icon: 'plus',
-        label: 'New request collection',
-        run: createNewCollection,
+      {
+        id: 'design',
+        label: `Documents (${documentsCount})`,
+        icon: 'file',
+        action: {
+          icon: 'plus',
+          label: 'New design document',
+          run: createNewDocument,
+        },
       },
-    },
+      {
+        id: 'collection',
+        label: `Collections (${collectionsCount})`,
+        icon: 'bars',
+        action: {
+          icon: 'plus',
+          label: 'New request collection',
+          run: createNewCollection,
+        },
+      },
       {
         id: 'mock-server',
         label: `Mock (${mockServersCount})`,
@@ -960,7 +983,7 @@ const ProjectRoute: FC = () => {
           run: createNewGlobalEnvironment,
         },
       },
-  ];
+    ];
   const defaultStorageSelection = storage === ORG_STORAGE_RULE.LOCAL_ONLY ? 'local' : 'remote';
   const isRemoteProjectInconsistent = activeProject && isRemoteProject(activeProject) && storage === ORG_STORAGE_RULE.LOCAL_ONLY;
   const isLocalProjectInconsistent = activeProject && !isRemoteProject(activeProject) && storage === ORG_STORAGE_RULE.CLOUD_ONLY;
@@ -1374,6 +1397,7 @@ const ProjectRoute: FC = () => {
                         <EmptyStatePane
                           createRequestCollection={createNewCollection}
                           createDesignDocument={createNewDocument}
+                          createAICollection={createAICollection}
                           createMockServer={createNewMockServer}
                           createEnvironment={createNewGlobalEnvironment}
                           importFrom={() => setImportModalType('file')}

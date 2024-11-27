@@ -436,6 +436,13 @@ async function renderApp() {
                                       ).createRequestGroupAction(...args),
                                   },
                                   {
+                                    path: 'request-group/new-response',
+                                    action: async (...args) =>
+                                      (
+                                        await import('./routes/request-group')
+                                      ).createRequestGroupWithResponseAction(...args),
+                                  },
+                                  {
                                     path: 'request-group/delete',
                                     action: async (...args) =>
                                       (
@@ -1067,6 +1074,13 @@ async function renderApp() {
                               (
                                 await import('./routes/actions')
                               ).createNewWorkspaceAction(...args),
+                          },
+                          {
+                            path: 'new-with-req',
+                            action: async (...args) =>
+                              (
+                                await import('./routes/actions')
+                              ).createNewWorkspaceWithRequestAction(...args),
                           },
                           {
                             path: 'delete',

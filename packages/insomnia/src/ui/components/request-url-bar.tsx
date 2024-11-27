@@ -25,6 +25,7 @@ import { MethodDropdown } from './dropdowns/method-dropdown';
 import { createKeybindingsHandler, useDocBodyKeyboardShortcuts } from './keydown-binder';
 import { GenerateCodeModal } from './modals/generate-code-modal';
 import { showAlert, showModal, showPrompt } from './modals/index';
+import { TestGeneratorModal } from './modals/test-generator-modal';
 import { VariableMissingErrorModal } from './modals/variable-missing-error-modal';
 
 interface Props {
@@ -235,6 +236,19 @@ export const RequestUrlBar = forwardRef<RequestUrlBarHandle, Props>(({
           onPaste={onPaste}
         />
         <div className='flex self-stretch'>
+          <button
+            onClick={() => showModal(TestGeneratorModal, {
+              request: activeRequest as Request,
+              machineId: '423423',
+              organizationId,
+              projectId,
+              workspaceId,
+            })}
+            className={`mx-2 px-[--padding-md] bg-[--color-info] text-[--color-font-info] ${borderRadius}`}
+            type="button"
+          >
+            Generate Tests
+          </button>
           {isCancellable ? (
             <button
               type="button"

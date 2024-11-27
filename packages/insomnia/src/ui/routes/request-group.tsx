@@ -35,6 +35,20 @@ export const createRequestGroupAction: ActionFunction = async ({ request, params
   await models.requestGroupMeta.create({ parentId: requestGroup._id, collapsed: false });
   return null;
 };
+
+export const createRequestGroupWithResponseAction: ActionFunction = async ({ request, params }) => {
+  const { workspaceId } = params;
+  const formData = await request.formData();
+  const name = formData.get('name') as string;
+  const parentId = formData.get('parentId') as string;
+  // New folder environment to be key-value pair by default;
+  const environmentType = formData.get('environmentType') as EnvironmentType || EnvironmentType.KVPAIR;
+  const requestGroup = await models.requestGroup.create({ parentId: parentId || workspaceId, name, environmentType });
+  await models.requestGroupMeta.create({ parentId: requestGroup._id, collapsed: false });
+  console.log('Request Group', requestGroup);
+
+  return { requestGroup };
+};
 export const updateRequestGroupAction: ActionFunction = async ({ request, params }) => {
   const { requestGroupId } = params;
   invariant(typeof requestGroupId === 'string', 'Request Group ID is required');
