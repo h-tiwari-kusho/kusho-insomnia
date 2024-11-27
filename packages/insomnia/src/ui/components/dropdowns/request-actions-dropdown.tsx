@@ -29,6 +29,7 @@ import { AskModal } from '../modals/ask-modal';
 import { GenerateCodeModal } from '../modals/generate-code-modal';
 import { RequestSettingsModal } from '../modals/request-settings-modal';
 import { TestGeneratorModal } from '../modals/test-generator-modal';
+import { useOrganizationLoaderData } from '../../routes/organization';
 
 interface Props {
   activeEnvironment: Environment;
@@ -188,6 +189,7 @@ export const RequestActionsDropdown = ({
         ],
       }];
 
+  const { user } = useOrganizationLoaderData();
   const requestActionList: {
     name: string;
     id: string;
@@ -218,7 +220,7 @@ export const RequestActionsDropdown = ({
             name: 'Generate Tests',
             action: () => showModal(TestGeneratorModal, {
               request: request as Request,
-              machineId: '423423',
+              machineId: user?.id ?? "DEFAULT_INSOMNIA_USER",
               organizationId,
               projectId,
               workspaceId,

@@ -27,6 +27,7 @@ import { GenerateCodeModal } from './modals/generate-code-modal';
 import { showAlert, showModal, showPrompt } from './modals/index';
 import { TestGeneratorModal } from './modals/test-generator-modal';
 import { VariableMissingErrorModal } from './modals/variable-missing-error-modal';
+import { useOrganizationLoaderData } from '../routes/organization';
 
 interface Props {
   handleAutocompleteUrls: () => Promise<string[]>;
@@ -211,6 +212,8 @@ export const RequestUrlBar = forwardRef<RequestUrlBarHandle, Props>(({
   const isEventStreamOpen = useReadyState({ requestId: activeRequest._id, protocol: 'curl' });
   const isGraphQLSubscriptionOpen = useReadyState({ requestId: activeRequest._id, protocol: 'webSocket' });
   const isCancellable = currentInterval || currentTimeout || isEventStreamOpen || isGraphQLSubscriptionOpen;
+  const { user } = useOrganizationLoaderData();
+
   return (
     <div className="w-full flex justify-between self-stretch items-stretch">
       <div className="flex items-center">
@@ -239,7 +242,7 @@ export const RequestUrlBar = forwardRef<RequestUrlBarHandle, Props>(({
           <button
             onClick={() => showModal(TestGeneratorModal, {
               request: activeRequest as Request,
-              machineId: '423423',
+              machineId: user?.id ?? "DEFAULT_INSOMNIA_USER",
               organizationId,
               projectId,
               workspaceId,

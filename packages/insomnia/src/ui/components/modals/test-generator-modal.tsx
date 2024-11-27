@@ -56,6 +56,7 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
   const modalRef = useRef<ModalHandle>(null);
   const folderFetcher = useFetcher();
   const requestFetcher = useFetcher();
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const [state, setState] = useState<State>({
     request: undefined,
@@ -131,6 +132,7 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
     if (!state.machineId) {
       return;
     }
+    abortControllerRef.current = new AbortController();
 
     const response = await fetch('https://be.kusho.ai/vscode/generate/streaming', {
       method: 'POST',
@@ -150,6 +152,7 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
         },
         test_suite_name: `${request.name} Tests`,
       }),
+      signal: abortControllerRef.current.signal,
     });
 
     const reader = response.body?.getReader();
@@ -240,6 +243,7 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
 
   useImperativeHandle(ref, () => ({
     hide: () => {
+      abortControllerRef.current?.abort();
       modalRef.current?.hide();
       setState({
         request: undefined,
@@ -250,13 +254,16 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
       });
     },
     show: ({ request, machineId, organizationId, projectId, workspaceId }) => {
-      if (!request) {
+      console.log("HERE")
+      if (!request.url) {
         showModal(AlertModal, {
           title: 'Error',
           message: 'Cannot generate tests: No request data provided',
         });
+        console.log("HERE1")
         return;
       }
+      console.log("HERE2")
       setState(prev => ({
         ...prev,
         request,
@@ -265,10 +272,15 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
         projectId,
         workspaceId,
       }));
-      modalRef.current?.show();
-      startTestGeneration(request);
     },
-  }), [startTestGeneration]);
+  }), [state.isGenerating]);
+
+  useEffect(() => {
+    if (state.request && !state.isGenerating) {
+      modalRef.current?.show();
+      startTestGeneration(state.request);
+    }
+  }, [state.request, startTestGeneration]);
 
   const { request, isGenerating, error, testCases } = state;
 
@@ -290,18 +302,22 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
     if (isGenerating) {
       return (
         <div className="notice info margin-bottom-sm">
-          <div className="flex items-center">
-            <i className="fa fa-spinner fa-spin pad-right-sm" />
-            {!state.folderId ? (
-              <span>Creating test folder...</span>
-            ) : (
-              <span>Generating and creating test cases ({testCases.length} generated)...</span>
-            )}
+          <div className="flex flex-col">
+            <div className="flex items-center">
+              <i className="fa fa-spinner fa-spin pad-right-sm" />
+              {!state.folderId ? (
+                <span>Creating test folder...</span>
+              ) : (
+                <span>Generating and creating test cases ({testCases.length} generated)...</span>
+              )}
+            </div>
+            <div className="flex items-center mt-2">
+              <span>Please Do not close this window. The Generation will also stop.</span>
+            </div>
           </div>
         </div>
       );
     }
-
     if (testCases.length > 0) {
       return (
         <div className="notice success margin-bottom-sm">
