@@ -147,7 +147,7 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
           url: request.url,
           headers: request.headers?.reduce((acc, h) => ({ ...acc, [h.name]: h.value }), {}),
           path_params: request.pathParameters?.reduce((acc, p) => ({ ...acc, [p.name]: p.value }), {}),
-          json_body: request.body,
+          json_body: JSON.parse(request.body?.['text'] ?? {}),
           api_desc: request.description,
         },
         test_suite_name: `${request.name} Tests`,
@@ -254,16 +254,16 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
       });
     },
     show: ({ request, machineId, organizationId, projectId, workspaceId }) => {
-      console.log("HERE")
+      console.log('HERE');
       if (!request.url) {
         showModal(AlertModal, {
           title: 'Error',
           message: 'Cannot generate tests: No request data provided',
         });
-        console.log("HERE1")
+        console.log('HERE1');
         return;
       }
-      console.log("HERE2")
+      console.log('HERE2');
       setState(prev => ({
         ...prev,
         request,
@@ -413,4 +413,3 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
 });
 
 TestGeneratorModal.displayName = 'TestGeneratorModal';
-

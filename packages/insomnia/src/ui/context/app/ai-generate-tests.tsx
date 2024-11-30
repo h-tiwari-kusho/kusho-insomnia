@@ -171,7 +171,7 @@ export const TestGeneratorProvider: FC<TestGeneratorProviderProps> = ({
             url: request.url,
             headers: request.headers?.reduce((acc, h) => ({ ...acc, [h.name]: h.value }), {}),
             path_params: request.pathParameters?.reduce((acc, p) => ({ ...acc, [p.name]: p.value }), {}),
-            json_body: request.body,
+            json_body: JSON.parse(request.body?.['text'] ?? {}),
             api_desc: request.description,
           },
           test_suite_name: `${request.name} Tests`,
@@ -242,4 +242,3 @@ export const TestGeneratorProvider: FC<TestGeneratorProviderProps> = ({
     </TestGeneratorContext.Provider>
   );
 };
-
