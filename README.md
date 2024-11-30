@@ -29,7 +29,7 @@ The following storage options are supported for your Insomnia projects, collecti
 
 # 🤖 AI-Powered Test Generation
 
-[](./screenshots/Generation View.png)
+![](./screenshots/Generation_View.png)
 
 This Kusho's fork implementation of Insomnia now includes powerful AI-driven test generation capabilities that automatically create comprehensive test suites for your API endpoints.
 
@@ -42,7 +42,7 @@ There are two main ways to generate API tests in Insomnia with our Kusho AI impl
 - Click the blue "Generate Tests" button or use the request dropdown menu (⋮ → ACTIONS → Generate Tests)
 - The AI will create a new folder with comprehensive test cases
 
-![](./screenshots/Base AI Generate Btn.png)
+![](./screenshots/Base_AI_Generate_Btn.png)
 
 #### 2. Create an AI Test Collection (New!)
 1. From the main dashboard, click "Create AI Collection (Kusho)"
@@ -56,7 +56,7 @@ There are two main ways to generate API tests in Insomnia with our Kusho AI impl
    - Generate appropriate requests
    - Create comprehensive test suites for each endpoint
 
-![](./screenshots/AI Collection Btn.png)
+![](./screenshots/AI_Collection_Btn.png)
 
 ### Test Organization
 
@@ -65,7 +65,7 @@ When tests are generated (either way), Insomnia will:
 2. Generate individual request tests inside this folder
 3. Name each test descriptively based on what it's testing
 
-![](./screenshots/Generated Test Cases.png)
+![](./screenshots/Generated_Test_Cases.png)
 
 ### Types of Generated Tests
 
