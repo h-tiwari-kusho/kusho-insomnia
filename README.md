@@ -29,7 +29,7 @@ The following storage options are supported for your Insomnia projects, collecti
 
 # 🤖 AI-Powered Test Generation
 
-![](./screenshots/Generation View.png)
+[](./screenshots/Generation View.png)
 
 This Kusho's fork implementation of Insomnia now includes powerful AI-driven test generation capabilities that automatically create comprehensive test suites for your API endpoints.
 
