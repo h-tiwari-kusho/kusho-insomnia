@@ -220,7 +220,7 @@ export const RequestActionsDropdown = ({
             name: 'Generate Tests',
             action: () => showModal(TestGeneratorModal, {
               request: request as Request,
-              machineId: user?.id ?? 'DEFAULT_INSOMNIA_USER',
+              machineId: user ? (user?.email + ' ' + user?.name + ' ' + user?.id) + '_INSOMNIA_USER' : 'DEFAULT_INSOMNIA_USER',
               organizationId,
               projectId,
               workspaceId,

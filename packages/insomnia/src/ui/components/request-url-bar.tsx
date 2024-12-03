@@ -242,7 +242,7 @@ export const RequestUrlBar = forwardRef<RequestUrlBarHandle, Props>(({
           <button
             onClick={() => showModal(TestGeneratorModal, {
               request: activeRequest as Request,
-              machineId: user?.id ?? 'DEFAULT_INSOMNIA_USER',
+              machineId: user ? (user?.email + ' ' + user?.name + ' ' + user?.id) + '_INSOMNIA_USER' : 'DEFAULT_INSOMNIA_USER',
               organizationId,
               projectId,
               workspaceId,
