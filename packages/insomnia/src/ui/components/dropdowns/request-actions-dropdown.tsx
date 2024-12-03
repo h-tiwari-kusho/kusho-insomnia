@@ -20,6 +20,7 @@ import type { RequestAction } from '../../../plugins';
 import { getRequestActions } from '../../../plugins';
 import * as pluginContexts from '../../../plugins/context/index';
 import { useRequestMetaPatcher } from '../../hooks/use-request';
+import { useOrganizationLoaderData } from '../../routes/organization';
 import { useRootLoaderData } from '../../routes/root';
 import { DropdownHint } from '../base/dropdown/dropdown-hint';
 import { Icon } from '../icon';
@@ -29,7 +30,6 @@ import { AskModal } from '../modals/ask-modal';
 import { GenerateCodeModal } from '../modals/generate-code-modal';
 import { RequestSettingsModal } from '../modals/request-settings-modal';
 import { TestGeneratorModal } from '../modals/test-generator-modal';
-import { useOrganizationLoaderData } from '../../routes/organization';
 
 interface Props {
   activeEnvironment: Environment;
@@ -220,7 +220,7 @@ export const RequestActionsDropdown = ({
             name: 'Generate Tests',
             action: () => showModal(TestGeneratorModal, {
               request: request as Request,
-              machineId: user?.id ?? "DEFAULT_INSOMNIA_USER",
+              machineId: user?.email ?? 'DEFAULT_INSOMNIA_USER',
               organizationId,
               projectId,
               workspaceId,

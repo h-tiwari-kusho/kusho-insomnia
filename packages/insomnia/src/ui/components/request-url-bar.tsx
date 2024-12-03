@@ -16,6 +16,7 @@ import { useReadyState } from '../hooks/use-ready-state';
 import { useRequestPatcher } from '../hooks/use-request';
 import { useRequestMetaPatcher } from '../hooks/use-request';
 import { useTimeoutWhen } from '../hooks/useTimeoutWhen';
+import { useOrganizationLoaderData } from '../routes/organization';
 import type { ConnectActionParams, RequestLoaderData, SendActionParams } from '../routes/request';
 import { useRootLoaderData } from '../routes/root';
 import type { WorkspaceLoaderData } from '../routes/workspace';
@@ -27,7 +28,6 @@ import { GenerateCodeModal } from './modals/generate-code-modal';
 import { showAlert, showModal, showPrompt } from './modals/index';
 import { TestGeneratorModal } from './modals/test-generator-modal';
 import { VariableMissingErrorModal } from './modals/variable-missing-error-modal';
-import { useOrganizationLoaderData } from '../routes/organization';
 
 interface Props {
   handleAutocompleteUrls: () => Promise<string[]>;
@@ -242,7 +242,7 @@ export const RequestUrlBar = forwardRef<RequestUrlBarHandle, Props>(({
           <button
             onClick={() => showModal(TestGeneratorModal, {
               request: activeRequest as Request,
-              machineId: user?.id ?? "DEFAULT_INSOMNIA_USER",
+              machineId: user?.email ?? 'DEFAULT_INSOMNIA_USER',
               organizationId,
               projectId,
               workspaceId,
