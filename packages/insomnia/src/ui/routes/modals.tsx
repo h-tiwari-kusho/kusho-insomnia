@@ -17,6 +17,7 @@ import { ResponseDebugModal } from '../components/modals/response-debug-modal';
 import { SelectModal } from '../components/modals/select-modal';
 import { SettingsModal } from '../components/modals/settings-modal';
 import { SyncMergeModal } from '../components/modals/sync-merge-modal';
+import { TestGeneratorModal } from '../components/modals/test-generator-modal';
 import { WrapperModal } from '../components/modals/wrapper-modal';
 import type { WorkspaceLoaderData } from './workspace';
 
@@ -28,6 +29,7 @@ const Modals: FC = () => {
     <div key="modals" className="modals">
       <ErrorBoundary showAlert>
         <AlertModal ref={instance => registerModal(instance, 'AlertModal')} />
+        <TestGeneratorModal ref={instance => registerModal(instance, 'TestGeneratorModal')} />
         <ErrorModal ref={instance => registerModal(instance, 'ErrorModal')} />
         <PromptModal
           ref={instance => registerModal(instance, 'PromptModal')}

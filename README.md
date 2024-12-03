@@ -25,7 +25,129 @@ The following storage options are supported for your Insomnia projects, collecti
 - **Git Sync**: for Git storage using any 3rd party Git repository, without going through the cloud.
 - **Cloud Sync**: for cloud collaboration, optionally end-to-end encrypted (E2EE) in the cloud.
 
-![Insomnia API Client](https://raw.githubusercontent.com/Kong/insomnia/develop/screenshots/main.png)
+![Insomnia API CliHere's the complete markdown for the AI-Powered Test Generation section, including image placement instructions:
+
+# 🤖 AI-Powered Test Generation
+
+![](./screenshots/Generation_View.png)
+
+This Kusho's fork implementation of Insomnia now includes powerful AI-driven test generation capabilities that automatically create comprehensive test suites for your API endpoints.
+
+### Getting Started with Test Generation
+
+There are two main ways to generate API tests in Insomnia with our Kusho AI implementation:
+
+#### 1. Generate Tests for Existing Requests
+- Open your API request
+- Click the blue "Generate Tests" button or use the request dropdown menu (⋮ → ACTIONS → Generate Tests)
+- The AI will create a new folder with comprehensive test cases
+
+![](./screenshots/Base_AI_Generate_Btn.png)
+
+#### 2. Create an AI Test Collection (New!)
+1. From the main dashboard, click "Create AI Collection (Kusho)"
+2. Enter your API details:
+   - Base URL
+   - Endpoints
+   - Authentication requirements
+   - Expected payload formats
+3. Click "Generate Tests" to automatically:
+   - Create a new collection
+   - Generate appropriate requests
+   - Create comprehensive test suites for each endpoint
+
+![](./screenshots/AI_Collection_Btn.png)
+
+### Test Organization
+
+When tests are generated (either way), Insomnia will:
+1. Create a new folder named "[Your Request Name] Tests"
+2. Generate individual request tests inside this folder
+3. Name each test descriptively based on what it's testing
+
+![](./screenshots/Generated_Test_Cases.png)
+
+### Types of Generated Tests
+
+Our implementation leverages Kusho's state-of-the-art AI model to generate comprehensive API test suites. The AI model has been specifically trained to understand REST API patterns, edge cases, and security considerations, generating tests that cover:
+
+### Input Validation Testing
+- Empty string validations for required fields
+- Boundary testing for string lengths and numeric values
+- Special character handling in input fields (`$`, `%`, `@`, `#`, etc.)
+- Non-English character validation (UTF-8 encoding tests)
+- Case sensitivity tests (lowercase, uppercase, mixed case)
+- Leading/trailing whitespace validation
+
+### JSON Structure Testing
+- Missing required fields in JSON objects
+- Extra/unexpected fields in payloads
+- Nested object validation
+- Array handling and validation
+- Integer vs string type mismatches
+- Null value handling
+- Extremely long JSON objects
+- Malformed JSON structures
+
+### HTTP Method Validation
+- Wrong HTTP method usage
+- Method not allowed scenarios
+- HEAD/OPTIONS request validation
+- Method override attempts
+
+### Security-Focused Tests
+- SQL injection pattern detection
+- Basic XSS payload testing
+- Special character security validation
+- Token/authentication field validation
+- Role-based access scenarios
+
+### Performance Edge Cases
+- Large payload testing
+- Long string inputs
+- High Unicode character counts
+- Deeply nested JSON structures
+- Multiple concurrent requests
+
+### Field-Specific Intelligence
+- Email format validation
+- Date format testing
+- Phone number format checking
+- URL encoding validation
+- Role field permission testing
+- ID field format validation
+
+The AI model has been trained on millions of API endpoints and common testing patterns, allowing it to:
+- Identify field types and generate appropriate test cases
+- Understand API conventions and best practices
+- Detect potential security vulnerabilities
+- Generate relevant boundary test cases
+- Create meaningful validation scenarios
+
+Each generated test includes:
+- Descriptive name explaining the test purpose
+- Appropriate HTTP method configuration
+- Relevant test data and payloads
+- Expected response validation criteria
+- Necessary headers and authentication settings
+
+### Benefits of AI Collection Generation
+
+- **Quick Start**: Instantly create complete test suites for new APIs
+- **Comprehensive Coverage**: AI automatically identifies all testable scenarios
+- **Structured Organization**: Tests are logically grouped by endpoint and test type
+- **Ready to Run**: All tests are pre-configured and ready to execute
+- **Customizable**: Generated tests can be modified to suit specific needs
+
+The AI collection generator is perfect for:
+- Starting new API testing projects
+- Creating baseline test coverage
+- Generating regression test suites
+- Exploring edge cases and security scenarios
+
+The test generation is powered by Kusho's latest AI model iteration, which has been fine-tuned specifically for API testing scenarios and maintains a continuously updated understanding of API security best practices and validation requirements.
+
+Let me know if you'd like me to adjust any part of this documentation or provide more specific details about certain features!ent](https://raw.githubusercontent.com/Kong/insomnia/develop/screenshots/main.png)
 
 ## Get started for free
 

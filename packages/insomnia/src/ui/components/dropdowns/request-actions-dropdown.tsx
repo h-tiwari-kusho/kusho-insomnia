@@ -28,6 +28,8 @@ import { AlertModal } from '../modals/alert-modal';
 import { AskModal } from '../modals/ask-modal';
 import { GenerateCodeModal } from '../modals/generate-code-modal';
 import { RequestSettingsModal } from '../modals/request-settings-modal';
+import { TestGeneratorModal } from '../modals/test-generator-modal';
+import { useOrganizationLoaderData } from '../../routes/organization';
 
 interface Props {
   activeEnvironment: Environment;
@@ -152,7 +154,6 @@ export const RequestActionsDropdown = ({
     });
   };
 
-  // Can only generate code for regular requests, not gRPC requests
   const canGenerateCode = isRequest(request);
 
   const codeGenerationActions: {
@@ -188,6 +189,7 @@ export const RequestActionsDropdown = ({
         ],
       }];
 
+  const { user } = useOrganizationLoaderData();
   const requestActionList: {
     name: string;
     id: string;
@@ -212,6 +214,18 @@ export const RequestActionsDropdown = ({
             action: togglePin,
             icon: 'thumbtack',
             hint: hotKeyRegistry.request_togglePin,
+          },
+          {
+            id: 'Generate',
+            name: 'Generate Tests',
+            action: () => showModal(TestGeneratorModal, {
+              request: request as Request,
+              machineId: user?.id ?? "DEFAULT_INSOMNIA_USER",
+              organizationId,
+              projectId,
+              workspaceId,
+            }),
+            icon: 'star',
           },
           {
             id: 'Duplicate',

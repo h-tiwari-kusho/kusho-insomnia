@@ -139,12 +139,28 @@ export const createRequestAction: ActionFunction = async ({ request, params }) =
 
   let activeRequestId;
   if (requestType === 'HTTP') {
-    activeRequestId = (await models.request.create({
-      parentId: parentId || workspaceId,
-      method: METHOD_GET,
-      name: 'New Request',
-      headers: defaultHeaders,
-    }))._id;
+    console.log('GERE', activeRequestId);
+    if (!!req) {
+      console.log('GERE1', activeRequestId);
+      activeRequestId = (await models.request.create({
+        parentId: parentId || workspaceId,
+        method: METHOD_GET,
+        name: req.name,
+        headers: defaultHeaders,
+        url: req.url,
+        body: req.body as RequestBody,
+        authentication: req.authentication,
+        parameters: req.parameters as RequestParameter[],
+      }))._id;
+    } else {
+      console.log('GERE2', activeRequestId);
+      activeRequestId = (await models.request.create({
+        parentId: parentId || workspaceId,
+        method: METHOD_GET,
+        name: 'New Request',
+        headers: defaultHeaders,
+      }))._id;
+    }
   }
   if (requestType === 'gRPC') {
     activeRequestId = (await models.grpcRequest.create({
@@ -202,7 +218,6 @@ export const createRequestAction: ActionFunction = async ({ request, params }) =
         parameters: req.parameters as RequestParameter[],
       }))._id;
     } catch (error) {
-      console.error(error);
       return null;
     }
   }

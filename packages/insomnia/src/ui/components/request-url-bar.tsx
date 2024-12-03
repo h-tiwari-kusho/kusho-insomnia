@@ -25,7 +25,9 @@ import { MethodDropdown } from './dropdowns/method-dropdown';
 import { createKeybindingsHandler, useDocBodyKeyboardShortcuts } from './keydown-binder';
 import { GenerateCodeModal } from './modals/generate-code-modal';
 import { showAlert, showModal, showPrompt } from './modals/index';
+import { TestGeneratorModal } from './modals/test-generator-modal';
 import { VariableMissingErrorModal } from './modals/variable-missing-error-modal';
+import { useOrganizationLoaderData } from '../routes/organization';
 
 interface Props {
   handleAutocompleteUrls: () => Promise<string[]>;
@@ -210,6 +212,8 @@ export const RequestUrlBar = forwardRef<RequestUrlBarHandle, Props>(({
   const isEventStreamOpen = useReadyState({ requestId: activeRequest._id, protocol: 'curl' });
   const isGraphQLSubscriptionOpen = useReadyState({ requestId: activeRequest._id, protocol: 'webSocket' });
   const isCancellable = currentInterval || currentTimeout || isEventStreamOpen || isGraphQLSubscriptionOpen;
+  const { user } = useOrganizationLoaderData();
+
   return (
     <div className="w-full flex justify-between self-stretch items-stretch">
       <div className="flex items-center">
@@ -235,6 +239,19 @@ export const RequestUrlBar = forwardRef<RequestUrlBarHandle, Props>(({
           onPaste={onPaste}
         />
         <div className='flex self-stretch'>
+          <button
+            onClick={() => showModal(TestGeneratorModal, {
+              request: activeRequest as Request,
+              machineId: user?.id ?? "DEFAULT_INSOMNIA_USER",
+              organizationId,
+              projectId,
+              workspaceId,
+            })}
+            className={`mx-2 px-[--padding-md] bg-[--color-info] text-[--color-font-info] ${borderRadius}`}
+            type="button"
+          >
+            Generate Tests
+          </button>
           {isCancellable ? (
             <button
               type="button"
