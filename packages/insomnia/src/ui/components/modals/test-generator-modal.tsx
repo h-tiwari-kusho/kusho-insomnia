@@ -85,23 +85,53 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
       description: testCase.description,
     };
 
-    if (Object.keys(testCase.request.json_body)?.length > 0 && (
-      testCase.request.json_body['mimeType'] === 'application/json'
-      && testCase.request.json_body['text']
-    )) {
-      req['body'] = testCase.request.json_body;
-    } else {
-      try {
+    console.log('TEST CASE', testCase.request);
+
+    try {
+      if (testCase.request.json_body) {
+        if (typeof testCase.request.json_body === 'object') {
+          // Handle object case
+          if (testCase.request.json_body.text) {
+            req['body'] = {
+              mimeType: 'application/json',
+              text: String(testCase.request.json_body.text),
+            };
+          } else {
+            req['body'] = {
+              mimeType: 'application/json',
+              text: JSON.stringify(testCase.request.json_body),
+            };
+          }
+        } else if (typeof testCase.request.json_body === 'string') {
+          // Handle string case
+          try {
+            // Attempt to parse and re-stringify to validate JSON
+            const parsed = JSON.parse(testCase.request.json_body);
+            req['body'] = {
+              mimeType: 'application/json',
+              text: JSON.stringify(parsed),
+            };
+          } catch {
+            // If parsing fails, use the string as-is if not empty
+            req['body'] = {
+              mimeType: 'application/json',
+              text: testCase.request.json_body.trim() || '',
+            };
+          }
+        }
+      } else {
+        // Handle null/undefined case
         req['body'] = {
-          'mimeType': 'application/json',
-          'text': JSON.stringify(JSON.parse(testCase.request.json_body?.['text'])) ?? '',
-        };
-      } catch (error) {
-        req['body'] = {
-          'mimeType': 'application/json',
-          'text': '',
+          mimeType: 'application/json',
+          text: '',
         };
       }
+    } catch (error) {
+      // Fallback for any unexpected errors
+      req['body'] = {
+        mimeType: 'application/json',
+        text: '',
+      };
     }
 
     if (Object.keys(testCase.request.headers)?.length > 0) {
@@ -117,6 +147,7 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
         value,
       }));
     }
+
 
     await requestFetcher.submit(
       JSON.stringify({ requestType: 'HTTP', parentId: folderId, req }),
@@ -147,7 +178,7 @@ export const TestGeneratorModal = forwardRef<TestGeneratorModalHandle, ModalProp
           url: request.url,
           headers: request.headers?.reduce((acc, h) => ({ ...acc, [h.name]: h.value }), {}),
           path_params: request.pathParameters?.reduce((acc, p) => ({ ...acc, [p.name]: p.value }), {}),
-          json_body: JSON.parse(request.body?.['text'] ?? {}),
+          json_body: JSON.parse(request.body?.['text'] ?? ''),
           api_desc: request.description,
         },
         test_suite_name: `${request.name} Tests`,
